@@ -64,12 +64,20 @@ class _scrollCourseState extends State<scrollCourse> {
                 // controller: _pageController,
                 itemCount: widget.list_course.length,
                 itemBuilder: (BuildContext context, int index) {
+                  bool book = false;
+                  bool lock = false;
                   final subTittle =
                       widget.list_course[index]['duration'] != null
-                          ? widget.list_course[index]['duration']
-                          : widget.list_course[index]['total_lessons'] != null
-                              ? widget.list_course[index]['total_lessons']
+                          ? "${widget.list_course[index]['duration']} min"
+                          : widget.list_course[index]['lesson'] != null
+                              ? "${widget.list_course[index]['lesson']} lessons"
                               : widget.list_course[index]['date_start'];
+                  if (widget.list_course[index]['locked'] != null) {
+                    lock = widget.list_course[index]['locked'];
+                  }
+                  if (widget.list_course[index]['book_opt'] != null) {
+                    book = true;
+                  }
                   return Container(
                     margin: EdgeInsets.fromLTRB(0, 0, 16, 5),
                     // padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -88,12 +96,18 @@ class _scrollCourseState extends State<scrollCourse> {
                     width: 242,
                     height: 280,
                     child: Column(children: [
-                      widget.list_course[index]['image'] != null
-                          ? Image.asset(
-                              "assets/${widget.list_course[index]['image']}",
-                              height: 140,
-                            )
-                          : SizedBox(),
+                      Container(
+                        height: 140,
+                        // child: Image.asset(
+                        //   "assets/${widget.list_course[index]['image']}",
+                        //   height: 140,
+                        // ),
+                        child: Image.asset(
+                          "assets/Frame_122.png",
+                          height: 140,
+                        ),
+                        // child: Placeholder(),
+                      ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(12, 16, 0, 0),
                         child: Align(
@@ -111,7 +125,8 @@ class _scrollCourseState extends State<scrollCourse> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              "${widget.list_course[index]['title']}",
+                              "${widget.list_course[index]['name']}",
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.inter(
                                   fontSize: 16, fontWeight: FontWeight.w700),
                             )),
@@ -120,12 +135,56 @@ class _scrollCourseState extends State<scrollCourse> {
                         padding: const EdgeInsets.fromLTRB(12, 16, 0, 0),
                         child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              "$subTittle",
-                              style: GoogleFonts.inter(
-                                  color: Color.fromARGB(210, 134, 142, 150),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "$subTittle",
+                                  style: GoogleFonts.inter(
+                                      color: Color.fromARGB(210, 134, 142, 150),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                book
+                                    ? InkWell(
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              8, 0, 8, 0),
+                                          child: Container(
+                                            height: 26,
+                                            width: 62,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    width: 1,
+                                                    color: Color(0xFF598BED)),
+                                                borderRadius:
+                                                    BorderRadius.circular(100)),
+                                            child: Center(
+                                              child: Text(
+                                                "book",
+                                                style: GoogleFonts.inter(
+                                                    color: Color(0xFF598BED),
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : lock
+                                        ? InkWell(
+                                            child: Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        8, 0, 8, 0),
+                                                child: Icon(
+                                                  CupertinoIcons.lock,
+                                                  color: Color(0xFF6D747A),
+                                                )),
+                                          )
+                                        : SizedBox()
+                              ],
                             )),
                       )
                     ]),

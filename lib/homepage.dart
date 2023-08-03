@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:blissyoga/scrollCourses.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -12,53 +15,63 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List programs = [
-    {
-      "title": "A complete guide for your new born baby",
-      "category": "Lifestyle",
-      "image": "Frame_122.png",
-      'total_lessons': "16 lessons"
-    },
-    {
-      "title": "Understanding of human behaviour",
-      "category": "Working Parents",
-      "image": "Frame_122.png",
-      'total_lessons': "12 lessons"
-    }
-  ];
+  List programs = [];
+  // List programs = [
+  //   {
+  //     "title": "A complete guide for your new born baby",
+  //     "category": "Lifestyle",
+  //     "image": "Frame_122.png",
+  //     'total_lessons': "16 lessons"
+  //   },
+  //   {
+  //     "title": "Understanding of human behaviour",
+  //     "category": "Working Parents",
+  //     "image": "Frame_122.png",
+  //     'total_lessons': "12 lessons"
+  //   }
+  // ];
   List events = [
     {
-      "title": "Understanding of human behaviour",
-      "book_url": "https://book.com",
+      "name": "Understanding of human behaviour",
+      "book_opt": "true",
       "category": "babycare",
       "image": "young-woman-doing-natarajasana-exercise 1.png",
       "date_start": "13 Feb, Sunday"
     },
     {
-      "title": "Understanding of human behaviour",
-      "book_url": "https://book.com",
+      "name": "Understanding of human behaviour",
+      "book_opt": "true",
       "category": "babycare",
       "image": "young-woman-doing-natarajasana-exercise 1.png",
       "date_start": "13 Feb, Sunday"
     }
   ];
-  List lesson_for_you = [
-    {
-      "title": "Understanding of human behaviour",
-      "icon": "lock",
-      "category": "babycare",
-      "image": "young-woman-doing-natarajasana-exercise 1.png",
-      "duration": "3 min"
-    },
-    {
-      "title": "Understanding of human behaviour",
-      "icon": "lock",
-      "category": "babycare",
-      "image": "young-woman-doing-natarajasana-exercise 1.png",
-      "duration": "1 min"
-    }
-  ];
+  List lesson_for_you = [];
   PageController _pageController = PageController(viewportFraction: 0.7);
+  @override
+  Future<void> fetchData() async {
+    final response = await http.get(
+        Uri.parse('https://632017e19f82827dcf24a655.mockapi.io/api/programs'));
+    final response_2 = await http.get(
+        Uri.parse('https://632017e19f82827dcf24a655.mockapi.io/api/lessons'));
+    if (response.statusCode == 200) {
+      print(json.decode(response_2.body)["items"]);
+      setState(() {
+        programs = json.decode(response.body)["items"];
+        lesson_for_you = json.decode(response_2.body)["items"];
+      });
+    } else {
+      print('Failed to fetch data');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentHeight = MediaQuery.of(context).size.height;
